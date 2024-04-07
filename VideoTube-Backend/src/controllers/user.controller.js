@@ -37,9 +37,12 @@ const registerUser = asyncHandler( async (req,res)=>{
         $or : [{username},{email}]
     })
     if(existedUser){
-        throw new ApiError(409,"User is already exist with this username or email")
+        return res
+        .status(409)
+        .json(new ApiResponse(409,'',"User already exist!"))
+        // throw new ApiError(409,"User is already exist with this username or email")
     }
-    console.log(req.files);
+    // console.log(req.files);
     const avatarLocalPath = req.files?.avatar[0]?.path;
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
     let coverImageLocalPath;
@@ -83,7 +86,7 @@ const loginUser = asyncHandler(async (req, res)=>{
     // if username is right we must check that password is matches or not 
     // if not throw the error and give pop up for registration
     // if matches give then create the access and refresh token
-    // send the refresh token to db
+    // send the refresh token to dbD
     //send the cookies
     
     const {email, username, password} =req.body
@@ -134,8 +137,8 @@ const logoutUser = asyncHandler(async (req,res)=>{
         // console.log(req.user);
         req.user._id,
         {
-            $set : {
-                refreshToken : undefined
+            $unset : {
+                refreshToken : 1
             }
         },
         {new : true}
